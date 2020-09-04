@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   simple_animations: ^2.2.1
   validators: ^2.0.1
+  navigation_dot_bar: ^0.1.3
+  font_awesome_flutter: ^8.8.1
 
   cupertino_icons: ^0.1.3
 

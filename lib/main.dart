@@ -1,8 +1,8 @@
-import 'package:eduthon/colors.dart';
+import 'package:eduthon/screens/joinorcreate.dart';
+import 'package:eduthon/shared/fade_animation.dart';
+import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart';
-
-import 'fade_animation.dart';
 
 void main() => runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -379,41 +379,4 @@ class BottomWaveClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
-
-class JoinOrCreateTeam extends StatefulWidget {
-  @override
-  _JoinOrCreateTeamState createState() => _JoinOrCreateTeamState();
-}
-
-class _JoinOrCreateTeamState extends State<JoinOrCreateTeam> {
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Center(
-            child: Container(
-                height: 60,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                      colors: [iconColor, mainColor],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.add, size: 30, color: iconColor),
-                    Text("Create a team",
-                        style: TextStyle(color: Colors.white, fontSize: 20))
-                  ],
-                )),
-          )
-        ]),
-      ),
-    );
-  }
 }
