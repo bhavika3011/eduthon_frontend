@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage>
                 if (_formKey.currentState.validate())
                   //TODO: register API
 
-                  ;
+                  print("register api");
                 else
                   print("do nothing");
                 Navigator.push(
