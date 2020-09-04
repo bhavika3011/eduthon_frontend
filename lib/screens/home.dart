@@ -1,3 +1,4 @@
+import 'package:eduthon/screens/chat.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,27 +17,34 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  List<Widget> widgetList = [];
+  List<Widget> widgetList = [
+    Container(),
+    ChatApp(),
+    Container(),
+    Container(),
+    Container()
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        body: widgetList.elementAt(_currentIndex),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => _updateWidget(index),
             selectedItemColor: mainColor,
             unselectedItemColor: iconColor,
             items: [
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.users), title: Text("Team")),
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.comments), title: Text("Chat")),
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.tasks), title: Text("Tasks")),
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.youtube), title: Text("Watch")),
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.user), title: Text("Profile")),
-        ]));
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.users), title: Text("Team")),
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.comments), title: Text("Chat")),
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.tasks), title: Text("Tasks")),
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.youtube), title: Text("Watch")),
+              BottomNavigationBarItem(
+                  icon: Icon(FontAwesomeIcons.user), title: Text("Profile")),
+            ]));
   }
 }
