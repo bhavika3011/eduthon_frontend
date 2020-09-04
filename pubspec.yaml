@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   simple_animations: ^2.2.1
+  validators: ^2.0.1
 
   cupertino_icons: ^0.1.3
 

@@ -1,5 +1,6 @@
 import 'package:eduthon/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:validators/validators.dart';
 
 import 'fade_animation.dart';
 
@@ -17,10 +18,25 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   TabController tabController;
   var tabHeaderStyle = TextStyle(fontSize: 15, color: mainColor);
+  TextEditingController emailController,
+      usernameController,
+      passwordController,
+      usernameLoginController,
+      passwordLoginController;
+  FocusNode emailNode,
+      usernameNode,
+      passwordNode,
+      usernameLoginNode,
+      passwordLoginNode;
+  final _formKey = GlobalKey<FormState>();
+  final _loginFormKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     tabController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    usernameController.dispose();
     super.dispose();
   }
 
@@ -28,6 +44,16 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    usernameController = TextEditingController();
+    emailNode = FocusNode();
+    usernameNode = FocusNode();
+    passwordNode = FocusNode();
+    usernameLoginController = TextEditingController();
+    passwordLoginController = TextEditingController();
+    usernameLoginNode = FocusNode();
+    passwordLoginNode = FocusNode();
   }
 
   TabBar _getTabBar() {
@@ -50,15 +76,22 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            Container(height: 200, child: WavyHeaderImage()),
-            SizedBox(height: 60, child: _getTabBar()),
-            Expanded(child: _getTabBarView([registerWidget(), loginWidget()]))
-          ],
+    return SafeArea(
+      child: Scaffold(
+        // resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Container(height: 190, child: WavyHeaderImage()),
+                SizedBox(height: 45, child: _getTabBar()),
+                SizedBox(
+                    height: 480,
+                    child: _getTabBarView([registerWidget(), loginWidget()]))
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -82,42 +115,78 @@ class _HomePageState extends State<HomePage>
                           blurRadius: 20.0,
                           offset: Offset(0, 10))
                     ]),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Colors.grey[100]))),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Email ID",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[100]))),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) return "Please enter your email";
+                            if (!isEmail(value))
+                              return "Please enter a valid email";
+
+                            return null;
+                          },
+                          textInputAction: TextInputAction.go,
+                          controller: emailController,
+                          focusNode: emailNode,
+                          onFieldSubmitted: (value) {
+                            usernameNode.requestFocus();
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Email ID",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Colors.grey[100]))),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Username",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[100]))),
+                        child: TextFormField(
+                          controller: usernameController,
+                          focusNode: usernameNode,
+                          onFieldSubmitted: (value) {
+                            passwordNode.requestFocus();
+                          },
+                          validator: (value) {
+                            if (value.isEmpty)
+                              return "Please enter your username";
+                            return null;
+                          },
+                          textInputAction: TextInputAction.go,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Username",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Password",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
-                      ),
-                    )
-                  ],
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty)
+                              return "Please enter your password";
+                            if (value.length < 8)
+                              return "Please enter min 8 characters";
+                            return null;
+                          },
+                          controller: passwordController,
+                          focusNode: passwordNode,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Password",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )),
           SizedBox(
@@ -125,22 +194,37 @@ class _HomePageState extends State<HomePage>
           ),
           FadeAnimation(
             0.6,
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  iconColor,
-                  Colors.purple[200],
-                  mainColor,
-                  // Colors.purple[400]
-                ], begin: Alignment.topRight, end: Alignment.bottomLeft),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  "Register",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+            InkWell(
+              onTap: () {
+                print(passwordController.value.text);
+                if (_formKey.currentState.validate())
+                  //TODO: register API
+
+                  ;
+                else
+                  print("do nothing");
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => JoinOrCreateTeam()));
+              },
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    iconColor,
+                    Colors.purple[200],
+                    mainColor,
+                    // Colors.purple[400]
+                  ], begin: Alignment.topRight, end: Alignment.bottomLeft),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    "Register",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),
@@ -171,30 +255,45 @@ class _HomePageState extends State<HomePage>
                           blurRadius: 20.0,
                           offset: Offset(0, 10))
                     ]),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(color: Colors.grey[100]))),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Username",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
+                child: Form(
+                  key: _loginFormKey,
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[100]))),
+                        child: TextFormField(
+                          controller: usernameLoginController,
+                          focusNode: usernameLoginNode,
+                          validator: (value) {
+                            if (value.isEmpty) return "Please enter a username";
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Username",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Password",
-                            hintStyle: TextStyle(color: Colors.grey[400])),
-                      ),
-                    )
-                  ],
+                      Container(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: passwordLoginController,
+                          focusNode: passwordLoginNode,
+                          validator: (value) {
+                            if (value.isEmpty) return "Please enter a password";
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Password",
+                              hintStyle: TextStyle(color: Colors.grey[400])),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               )),
           SizedBox(
@@ -225,12 +324,12 @@ class _HomePageState extends State<HomePage>
           SizedBox(
             height: 30,
           ),
-          FadeAnimation(
-              0.8,
-              Text(
-                "Forgot Password?",
-                style: TextStyle(color: mainColor),
-              )),
+          // FadeAnimation(
+          //     0.8,
+          //     Text(
+          //       "Forgot Password?",
+          //       style: TextStyle(color: mainColor),
+          //     )),
         ],
       ),
     );
@@ -280,4 +379,41 @@ class BottomWaveClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+}
+
+class JoinOrCreateTeam extends StatefulWidget {
+  @override
+  _JoinOrCreateTeamState createState() => _JoinOrCreateTeamState();
+}
+
+class _JoinOrCreateTeamState extends State<JoinOrCreateTeam> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Center(
+            child: Container(
+                height: 60,
+                width: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                      colors: [iconColor, mainColor],
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.add, size: 30, color: iconColor),
+                    Text("Create a team",
+                        style: TextStyle(color: Colors.white, fontSize: 20))
+                  ],
+                )),
+          )
+        ]),
+      ),
+    );
+  }
 }
