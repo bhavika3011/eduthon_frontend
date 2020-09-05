@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:eduthon/theme/colors.dart';
 
 class ToDo extends StatefulWidget {
-  List<String> _todoItems = [];
+  // List<String> _todoItems = [];
 
   @override
   _ToDoState createState() => _ToDoState();

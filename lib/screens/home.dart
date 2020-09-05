@@ -2,6 +2,7 @@ import 'package:eduthon/screens/chat.dart';
 import 'package:eduthon/screens/team.dart';
 import 'package:eduthon/shared/app_bar.dart';
 import 'package:eduthon/screens/todo.dart';
+import 'package:eduthon/screens/profile.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Container(),
     ToDo(),
     Container(),
-    Container(),
+    ProfileApp(),
     Container()
   ];
 
