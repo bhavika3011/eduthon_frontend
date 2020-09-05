@@ -1,4 +1,5 @@
-import 'package:eduthon/screens/chat.dart';
+// import 'package:eduthon/screens/chat.dart';
+import 'package:eduthon/screens/todo.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -19,7 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> widgetList = [
     Container(),
-    ChatApp(),
+    Container(),
+    // ChatApp(),
+    ToDo(),
     Container(),
     Container(),
     Container()
