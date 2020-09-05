@@ -1,4 +1,6 @@
 import 'package:eduthon/screens/chat.dart';
+import 'package:eduthon/screens/team.dart';
+import 'package:eduthon/shared/app_bar.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,22 +20,40 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> widgetList = [
-    Container(),
+    TeamWidget(),
     ChatApp(),
     Container(),
     Container(),
     Container()
   ];
 
+  List<String> titleList = ['Team', 'Chat', 'Tasks', 'Watch', 'Profile'];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: widgetList.elementAt(_currentIndex),
+        appBar: appBar(titleList[_currentIndex]),
+        body: PageTransitionSwitcher(
+          transitionBuilder: (
+            Widget child,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+          ) {
+            return FadeThroughTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            );
+          },
+          child: widgetList[_currentIndex],
+        ),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: (index) => _updateWidget(index),
             selectedItemColor: mainColor,
             unselectedItemColor: iconColor,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
             items: [
               BottomNavigationBarItem(
                   icon: Icon(FontAwesomeIcons.users), title: Text("Team")),

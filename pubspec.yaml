@@ -18,6 +18,7 @@ dependencies:
   navigation_dot_bar: ^0.1.3
   font_awesome_flutter: ^8.8.1
   animations: ^1.1.2
+  liquid_progress_indicator: ^0.3.2
 
   cupertino_icons: ^0.1.3
 
