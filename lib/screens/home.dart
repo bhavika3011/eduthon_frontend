@@ -1,14 +1,18 @@
+import 'package:eduthon/models/user.dart';
 import 'package:eduthon/screens/chat.dart';
 import 'package:eduthon/screens/team.dart';
 import 'package:eduthon/shared/app_bar.dart';
 import 'package:eduthon/screens/todo.dart';
 import 'package:eduthon/screens/profile.dart';
+import 'package:eduthon/screens/watch.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:animations/animations.dart';
 
 class HomeScreen extends StatefulWidget {
+  final User user;
+  HomeScreen(this.user);
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -21,14 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  List<Widget> widgetList = [
-    TeamWidget(),
-    Container(),
-    ToDo(),
-    Container(),
-    ProfileApp(),
-    Container()
-  ];
+  List<Widget> widgetList;
+  @override
+  void initState() {
+    super.initState();
+    widgetList = [
+      TeamWidget(),
+      Container(),
+      ToDo(widget.user),
+      YouTubeVids(),
+      ProfileApp(widget.user),
+    ];
+  }
 
   List<String> titleList = ['Team', 'Chat', 'Tasks', 'Watch', 'Profile'];
 

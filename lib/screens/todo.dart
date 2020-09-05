@@ -1,9 +1,16 @@
+import 'dart:async';
+
 import 'package:circular_check_box/circular_check_box.dart';
+import 'package:eduthon/backend/api_provider.dart';
+import 'package:eduthon/models/task.dart';
+import 'package:eduthon/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:eduthon/theme/colors.dart';
 
 class ToDo extends StatefulWidget {
   // List<String> _todoItems = [];
+  User user;
+  ToDo(this.user);
 
   @override
   _ToDoState createState() => _ToDoState();
@@ -12,17 +19,27 @@ class ToDo extends StatefulWidget {
 class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
   TabController tabController;
   var tabHeaderStyle = TextStyle(fontSize: 15, color: mainColor);
+  StreamController personalController;
+  StreamController groupController;
+  TextEditingController titleController, descController;
+  User user;
 
   @override
   void initState() {
     super.initState();
+    user = widget.user;
     tabController = TabController(length: 2, vsync: this);
+    personalController = StreamController<List<Task>>();
+    groupController = StreamController<List<Task>>();
+    personalController.add(user.taskList);
+    titleController = TextEditingController();
+    descController = TextEditingController();
   }
 
   TabBar _getTabBar() {
     return TabBar(
       indicatorColor: iconColor,
-      indicatorWeight: 6,
+      indicatorWeight: 5,
       tabs: <Widget>[
         Tab(child: Text("Group", style: tabHeaderStyle)),
         Tab(child: Text("Personal", style: tabHeaderStyle)),
@@ -61,84 +78,58 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
 
   Widget personalTodo() {
     return Scaffold(
-      backgroundColor: mainColor,
+      backgroundColor: Colors.white,
       body: Stack(
-        alignment: Alignment.center,
+        overflow: Overflow.visible,
         children: <Widget>[
-          // Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Container(
-          //     width: 300,
-          //     height: 600,
-          //     decoration:
-          //         BoxDecoration(borderRadius: BorderRadius.circular(20)),
-          //     child: Image.asset(
-          //       'assets/images/alone.jpg',
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          // ),
-          Positioned(
-            child: Text(
-              "Set your personal tasks here!",
-              style: TextStyle(
-                  color: iconColor, fontSize: 20, fontWeight: FontWeight.bold),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(40), topLeft: Radius.circular(40)),
             ),
-            top: 10,
-            left: 20,
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.85,
-            maxChildSize: 0.90,
-            minChildSize: 0.1,
-            builder: (BuildContext context, ScrollController scrolController) {
-              return Stack(
-                overflow: Overflow.visible,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(40),
-                          topLeft: Radius.circular(40)),
-                    ),
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            ListTile(
-                              title: Text(
-                                "Task No $index",
-                                style: TextStyle(
-                                    color: mainColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text(
-                                "This is the detail of task No $index",
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                              leading: Checkbox(
-                                  value: true,
-                                  onChanged: (val) {},
-                                  activeColor: Colors.green),
-                              isThreeLine: true,
+            child: StreamBuilder<List<Task>>(
+                stream: null,
+                builder: (context, snapshot) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(
+                              snapshot.data[index].title,
+                              style: TextStyle(
+                                  color: mainColor,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            Divider(color: iconColor, height: 2)
-                          ],
-                        );
-                      },
-                      controller: scrolController,
-                      itemCount: 10,
-                    ),
-                  ),
-                  Positioned(
-                    child: addPersonalTask(),
-                    top: -30,
-                    right: 30,
-                  )
-                ],
-              );
-            },
+                            subtitle: Text(
+                              snapshot.data[index].description,
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            leading: Checkbox(
+                                value: snapshot.data[index].progress,
+                                onChanged: (val) {
+                                  setState(() {
+                                    snapshot.data[index].progress =
+                                        !snapshot.data[index].progress;
+                                  });
+                                  print("call API");
+                                },
+                                activeColor: Colors.green),
+                            isThreeLine: true,
+                          ),
+                          Divider(color: iconColor, height: 2)
+                        ],
+                      );
+                    },
+                    itemCount: 10,
+                  );
+                }),
+          ),
+          Positioned(
+            child: addPersonalTask(),
+            bottom: 30,
+            right: 20,
           )
         ],
       ),
@@ -163,8 +154,15 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
             ),
             actions: <Widget>[
               FlatButton(
-                  onPressed: () {
+                  onPressed: () async {
                     print("api call");
+                    user.taskList = await CreateIndividualTask().createTask(
+                        user,
+                        Task(
+                            progress: false,
+                            title: titleController.value.text,
+                            description: descController.value.text));
+                    personalController.add(user.taskList);
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -245,12 +243,17 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
         child: Card(
-          elevation: 3,
+          shape: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none),
+          elevation: 5,
           child: Container(
             height: 50,
             width: 50,
-            decoration:
-                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: iconColor, width: 2),
+                borderRadius: BorderRadius.circular(10)),
             child: Icon(
               Icons.add,
               size: 30,
@@ -264,75 +267,43 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
 
   Widget groupTodo() {
     return Scaffold(
-      backgroundColor: mainColor,
-      body: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          // Container(
-          //   width: 400,
-          //   height: 600,
-          //   child: Image.asset(
-          //     'assets/images/group.jpg',
-          //     fit: BoxFit.contain,
-          //   ),
-          // ),
-          Positioned(
-            child: Text(
-              "View your common tasks here!",
-              style: TextStyle(
-                  color: iconColor, fontSize: 20, fontWeight: FontWeight.bold),
+        backgroundColor: Colors.white,
+        body: Stack(
+          overflow: Overflow.visible,
+          children: <Widget>[
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(40),
+                    topLeft: Radius.circular(40)),
+              ),
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return ListTile(
+                      title: Text(
+                        "Task No $index",
+                        style: TextStyle(
+                            color: mainColor, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        "This is the detail of task No $index",
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                      leading: Checkbox(
+                          value: true,
+                          onChanged: (val) {},
+                          activeColor: Colors.green));
+                },
+                itemCount: 10,
+              ),
             ),
-            top: 10,
-            left: 20,
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.85,
-            maxChildSize: 0.90,
-            minChildSize: 0.1,
-            builder: (BuildContext context, ScrollController scrolController) {
-              return Stack(
-                overflow: Overflow.visible,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(40),
-                          topLeft: Radius.circular(40)),
-                    ),
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                            title: Text(
-                              "Task No $index",
-                              style: TextStyle(
-                                  color: mainColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Text(
-                              "This is the detail of task No $index",
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                            leading: Checkbox(
-                                value: true,
-                                onChanged: (val) {},
-                                activeColor: Colors.green));
-                      },
-                      controller: scrolController,
-                      itemCount: 10,
-                    ),
-                  ),
-                  Positioned(
-                    child: Container(),
-                    top: -30,
-                    right: 30,
-                  )
-                ],
-              );
-            },
-          )
-        ],
-      ),
-    );
+            Positioned(
+              child: Container(),
+              top: -30,
+              right: 30,
+            )
+          ],
+        ));
   }
 }

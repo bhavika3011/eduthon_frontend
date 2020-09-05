@@ -1,7 +1,11 @@
+import 'package:eduthon/backend/api_provider.dart';
+import 'package:eduthon/models/user.dart';
+import 'package:eduthon/screens/home.dart';
 import 'package:eduthon/screens/joinorcreate.dart';
 import 'package:eduthon/shared/fade_animation.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:validators/validators.dart';
 
 void main() => runApp(MaterialApp(
@@ -16,7 +20,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-  final fontSizeTextStyle = TextStyle(fontSize: 20);
+  User user;
+  final fontSizeTextStyle = TextStyle(fontSize: 17);
   TabController tabController;
   var tabHeaderStyle = TextStyle(fontSize: 15, color: mainColor);
   TextEditingController emailController,
@@ -31,6 +36,7 @@ class _HomePageState extends State<HomePage>
       passwordLoginNode;
   final _formKey = GlobalKey<FormState>();
   final _loginFormKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -140,6 +146,7 @@ class _HomePageState extends State<HomePage>
                           onFieldSubmitted: (value) {
                             usernameNode.requestFocus();
                           },
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email ID",
@@ -185,6 +192,7 @@ class _HomePageState extends State<HomePage>
                           style: fontSizeTextStyle,
                           controller: passwordController,
                           focusNode: passwordNode,
+                          obscureText: true,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
@@ -204,16 +212,18 @@ class _HomePageState extends State<HomePage>
             InkWell(
               onTap: () {
                 print(passwordController.value.text);
-                if (_formKey.currentState.validate())
-                  //TODO: register API
-
-                  print("register api");
-                else
+                if (_formKey.currentState.validate()) {
+                  user = User(
+                      email: emailController.value.text,
+                      password: passwordController.value.text,
+                      username: usernameController.value.text,
+                      isTeamAdmin: false);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => JoinOrCreateTeam(user)));
+                } else
                   print("do nothing");
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => JoinOrCreateTeam()));
               },
               child: Container(
                 height: 50,
@@ -298,6 +308,7 @@ class _HomePageState extends State<HomePage>
                             if (value.isEmpty) return "Please enter a password";
                             return null;
                           },
+                          obscureText: true,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
@@ -314,24 +325,82 @@ class _HomePageState extends State<HomePage>
           ),
           FadeAnimation(
             0.6,
-            Container(
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  iconColor,
-                  Colors.purple[200],
-                  mainColor,
-                  // Colors.purple[400]
-                ], begin: Alignment.topRight, end: Alignment.bottomLeft),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Center(
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
+            InkWell(
+              onTap: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                if (_loginFormKey.currentState.validate())
+                  user = await LoginAPI().login(
+                      usernameLoginController.value.text,
+                      passwordLoginController.value.text);
+                print("here");
+                setState(() {
+                  isLoading = false;
+                });
+                print("here again");
+                if (user != null) {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomeScreen(user)));
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Invalid credentials",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      actions: <Widget>[
+                        FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text("Retry",
+                                  style: TextStyle(
+                                      fontSize: 15, color: mainColor)),
+                            ))
+                      ],
+                      content: Container(
+                          height: 40,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Please re-enter a valid username and password.",
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          )),
+                      shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    iconColor,
+                    Colors.purple[200],
+                    mainColor,
+                    // Colors.purple[400]
+                  ], begin: Alignment.topRight, end: Alignment.bottomLeft),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: isLoading
+                      ? SpinKitChasingDots(size: 20, color: Colors.white)
+                      : Text(
+                          "Login",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
                 ),
               ),
             ),
