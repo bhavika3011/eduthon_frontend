@@ -16,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  final fontSizeTextStyle = TextStyle(fontSize: 20);
   TabController tabController;
   var tabHeaderStyle = TextStyle(fontSize: 15, color: mainColor);
   TextEditingController emailController,
@@ -125,6 +126,7 @@ class _HomePageState extends State<HomePage>
                             border: Border(
                                 bottom: BorderSide(color: Colors.grey[100]))),
                         child: TextFormField(
+                          style: fontSizeTextStyle,
                           validator: (value) {
                             if (value.isEmpty) return "Please enter your email";
                             if (!isEmail(value))
@@ -141,7 +143,8 @@ class _HomePageState extends State<HomePage>
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Email ID",
-                              hintStyle: TextStyle(color: Colors.grey[400])),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -155,6 +158,7 @@ class _HomePageState extends State<HomePage>
                           onFieldSubmitted: (value) {
                             passwordNode.requestFocus();
                           },
+                          style: fontSizeTextStyle,
                           validator: (value) {
                             if (value.isEmpty)
                               return "Please enter your username";
@@ -164,7 +168,8 @@ class _HomePageState extends State<HomePage>
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Username",
-                              hintStyle: TextStyle(color: Colors.grey[400])),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -177,12 +182,14 @@ class _HomePageState extends State<HomePage>
                               return "Please enter min 8 characters";
                             return null;
                           },
+                          style: fontSizeTextStyle,
                           controller: passwordController,
                           focusNode: passwordNode,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
-                              hintStyle: TextStyle(color: Colors.grey[400])),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 20)),
                         ),
                       )
                     ],
@@ -223,7 +230,9 @@ class _HomePageState extends State<HomePage>
                   child: Text(
                     "Register",
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
                   ),
                 ),
               ),
@@ -271,10 +280,12 @@ class _HomePageState extends State<HomePage>
                             if (value.isEmpty) return "Please enter a username";
                             return null;
                           },
+                          style: fontSizeTextStyle,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Username",
-                              hintStyle: TextStyle(color: Colors.grey[400])),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 20)),
                         ),
                       ),
                       Container(
@@ -282,6 +293,7 @@ class _HomePageState extends State<HomePage>
                         child: TextFormField(
                           controller: passwordLoginController,
                           focusNode: passwordLoginNode,
+                          style: fontSizeTextStyle,
                           validator: (value) {
                             if (value.isEmpty) return "Please enter a password";
                             return null;
@@ -289,7 +301,8 @@ class _HomePageState extends State<HomePage>
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: "Password",
-                              hintStyle: TextStyle(color: Colors.grey[400])),
+                              hintStyle: TextStyle(
+                                  color: Colors.grey[400], fontSize: 20)),
                         ),
                       )
                     ],
@@ -316,7 +329,9 @@ class _HomePageState extends State<HomePage>
                 child: Text(
                   "Login",
                   style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20),
                 ),
               ),
             ),

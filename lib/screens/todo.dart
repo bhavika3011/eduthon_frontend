@@ -1,3 +1,4 @@
+import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:eduthon/theme/colors.dart';
 
@@ -116,10 +117,10 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                                 "This is the detail of task No $index",
                                 style: TextStyle(color: Colors.grey[700]),
                               ),
-                              leading: Icon(
-                                Icons.check_circle,
-                                color: mainColor,
-                              ),
+                              leading: Checkbox(
+                                  value: true,
+                                  onChanged: (val) {},
+                                  activeColor: Colors.green),
                               isThreeLine: true,
                             ),
                             Divider(color: iconColor, height: 2)
@@ -131,136 +132,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                     ),
                   ),
                   Positioned(
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        print("hey");
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        border: Border.all(color: iconColor)),
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.purple[200],
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text("Set new task!",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                ),
-                              ],
-                            ),
-                            actions: <Widget>[
-                              FlatButton(
-                                  onPressed: () {
-                                    print("api call");
-                                    Navigator.pop(context);
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8),
-                                    child: Text("Done",
-                                        style: TextStyle(
-                                            fontSize: 15, color: mainColor)),
-                                  ))
-                            ],
-                            content: Container(
-                              height: 250,
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: TextFormField(
-                                      // textAlign: TextAlign.center,
-                                      // controller: controller,
-                                      validator: (value) {
-                                        if (value.isEmpty)
-                                          return "Please enter a title";
-                                        return null;
-                                      },
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey[300])),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey[300])),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.purple[300])),
-                                          hintText: "Add task title",
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey[500],
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 18)),
-                                    ),
-                                  ),
-                                  // SizedBox(height: 20),
-                                  Container(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: TextFormField(
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold),
-                                      decoration: InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey[300])),
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.grey[300])),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: BorderSide(
-                                                  color: Colors.purple[300])),
-                                          hintText:
-                                              "Add a description (optional)",
-                                          hintStyle: TextStyle(
-                                              color: Colors.grey[500],
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 16)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            shape: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20)),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.purple[200],
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
+                    child: addPersonalTask(),
                     top: -30,
                     right: 30,
                   )
@@ -269,6 +141,123 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
             },
           )
         ],
+      ),
+    );
+  }
+
+  Widget addPersonalTask() {
+    return InkWell(
+      onTap: () {
+        print("hey");
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text("Set new task!",
+                      style: TextStyle(fontWeight: FontWeight.normal)),
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    print("api call");
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Text("Done",
+                        style: TextStyle(fontSize: 17, color: mainColor)),
+                  ))
+            ],
+            content: Container(
+              height: 250,
+              child: Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      // textAlign: TextAlign.center,
+                      // controller: controller,
+                      validator: (value) {
+                        if (value.isEmpty) return "Please enter a title";
+                        return null;
+                      },
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey[300])),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey[300])),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.purple[300])),
+                          hintText: "Task title",
+                          hintStyle: TextStyle(
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18)),
+                    ),
+                  ),
+                  // SizedBox(height: 20),
+                  Container(
+                    padding: EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey[300])),
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.grey[300])),
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide:
+                                  BorderSide(color: Colors.purple[300])),
+                          hintText: "Add a description (optional)",
+                          hintStyle: TextStyle(
+                              color: Colors.grey[500],
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            shape: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0.0, 5.0, 5.0, 5.0),
+        child: Card(
+          elevation: 3,
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration:
+                BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            child: Icon(
+              Icons.add,
+              size: 30,
+              color: Colors.purple[200],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -314,35 +303,27 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                     child: ListView.builder(
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(
-                            "Task No $index",
-                            style: TextStyle(
-                                color: mainColor, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            "This is the detail of task No $index",
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
-                          trailing: Icon(
-                            Icons.check_circle,
-                            color: mainColor,
-                          ),
-                          isThreeLine: true,
-                        );
+                            title: Text(
+                              "Task No $index",
+                              style: TextStyle(
+                                  color: mainColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              "This is the detail of task No $index",
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            leading: Checkbox(
+                                value: true,
+                                onChanged: (val) {},
+                                activeColor: Colors.green));
                       },
                       controller: scrolController,
                       itemCount: 10,
                     ),
                   ),
                   Positioned(
-                    child: FloatingActionButton(
-                      onPressed: () {},
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.purple[100],
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
+                    child: Container(),
                     top: -30,
                     right: 30,
                   )
