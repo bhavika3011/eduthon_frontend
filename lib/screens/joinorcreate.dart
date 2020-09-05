@@ -31,7 +31,7 @@ class _JoinOrCreateTeamState extends State<JoinOrCreateTeam> {
                       print("button tapped");
                     },
                     child: Container(
-                        height: 60,
+                        height: 50,
                         width: 280,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -102,13 +102,12 @@ class _JoinOrCreateTeamState extends State<JoinOrCreateTeam> {
                         padding: EdgeInsets.all(18.0),
                         child: SizedBox(
                           width: 280,
-                          height: 60,
+                          height: 50,
                           child: TextFormField(
                             textAlign: TextAlign.center,
                             controller: controller,
                             validator: (value) {
-                              if (value.isEmpty)
-                                return "Please enter a password";
+                              if (value.isEmpty) return "Please enter a code";
                               return null;
                             },
                             style: TextStyle(
@@ -142,7 +141,7 @@ class _JoinOrCreateTeamState extends State<JoinOrCreateTeam> {
                             print("button tapped");
                           },
                           child: Container(
-                              height: 60,
+                              height: 50,
                               width: 280,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),

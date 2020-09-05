@@ -1,5 +1,6 @@
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class TeamWidget extends StatefulWidget {
@@ -59,15 +60,26 @@ class MemberCard extends StatelessWidget {
                       image: NetworkImage(url), fit: BoxFit.cover)),
             ),
           ),
+          SizedBox(height: 5),
           Text("username",
               style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 16.5,
                   color: Colors.black,
                   fontWeight: FontWeight.bold)),
+          SizedBox(height: 5),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: progressBar(4, 10),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("4/10",
+                  style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
+              SizedBox(width: 3),
+              Icon(FontAwesomeIcons.check, size: 15, color: Colors.green)
+            ],
+          )
         ]));
   }
 
@@ -78,7 +90,10 @@ class MemberCard extends StatelessWidget {
         (index) => Expanded(
             flex: 1,
             child: Container(
-                decoration: BoxDecoration(color: mainColor), height: 10)));
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]),
+                    color: mainColor),
+                height: 10)));
     List<Widget> pendingList = List.generate(
         total - completed,
         (index) => Expanded(
