@@ -7,7 +7,7 @@ class ProfileApp extends StatelessWidget {
   final User user;
   ProfileApp(this.user);
   final String url =
-      "https://avatars2.githubusercontent.com/u/47568882?s=460&u=bbc6adfd634233f8203ddd66d9007e6f1a2a951f&v=4";
+      "https://i.graphicmama.com/uploads/2017/12/5a2699827c42c-office-work-i-am-the-man.png";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,14 +89,14 @@ class ProfileApp extends StatelessWidget {
                         SizedBox(height: 15),
                         RichText(
                           text: TextSpan(
-                            text: 'Team: ',
+                            text: 'Team-Code: ',
                             style: DefaultTextStyle.of(context).style.copyWith(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: mainColor),
                             children: <TextSpan>[
                               TextSpan(
-                                  text: 'wizards',
+                                  text: user.teamCode,
                                   style:
                                       TextStyle(fontWeight: FontWeight.normal)),
                             ],
@@ -113,7 +113,7 @@ class ProfileApp extends StatelessWidget {
                                 color: mainColor),
                             children: <TextSpan>[
                               TextSpan(
-                                  text: 'Member',
+                                  text: user.isTeamAdmin ? 'Admin' : 'Member',
                                   style:
                                       TextStyle(fontWeight: FontWeight.normal)),
                             ],

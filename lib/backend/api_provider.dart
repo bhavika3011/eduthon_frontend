@@ -20,11 +20,16 @@ class ApiProvider {
 }
 
 int decodeId(String id) {
-  print("---------");
   var base64encoded = base64.decode(id);
-  print("error");
   var bytesInLatin1 = latin1.decode(base64encoded);
   return int.parse(bytesInLatin1.split(':')[1]);
+}
+
+String encodeId(String key, int id) {
+  String finalId = key + ':' + id.toString();
+  var bytesInLatin1 = latin1.encode(finalId);
+  var base64encoded = base64.encode(bytesInLatin1);
+  return base64encoded;
 }
 
 class RegisterAPI {
@@ -39,7 +44,7 @@ class RegisterAPI {
         }
         }""";
     ApiProvider apiProvider = ApiProvider();
-
+    print(mutationQuery);
     String response = await apiProvider.interactWithApiQuery(mutationQuery);
     print(response);
     user = await UserAPI().userQuery(username);
@@ -73,7 +78,10 @@ class UserAPI {
     String response = await apiProvider.interactWithApiQuery(query);
     print(response);
     user = User.fromJson(response);
+    user.teamCode = encodeId('TeamPortfolio', user.team);
     user.taskList = await CreateIndividualTask().taskList(user.id);
+    user.teamTaskList =
+        await CreateIndividualTask().teamTaskList(user.teamCode);
     return user;
   }
 }
@@ -92,11 +100,13 @@ class LoginAPI {
     String response = await apiProvider.interactWithApiQuery(mutationQuery);
     print(response);
     Map<dynamic, dynamic> parsedResponse = json.decode(response);
-    if (parsedResponse["data"]["tokenAuth"]["token"] != null) {
-      print("logged in");
-      User user = await UserAPI().userQuery(username);
-      return user;
-    } else {
+    try {
+      if (parsedResponse["data"]["tokenAuth"]["token"] != null) {
+        print("logged in");
+        User user = await UserAPI().userQuery(username);
+        return user;
+      }
+    } catch (e) {
       return null;
     }
   }
@@ -146,7 +156,7 @@ class CreateNewTeamAndRegister {
 
 class CreateIndividualTask {
   Future<List<Task>> createTask(User user, Task task) async {
-    String mutationQuery = """"
+    String mutationQuery = """
     mutation {
   createIndvTask(input: {task: "${task.title}", desc: "${task.description}", user: ${user.primaryKey}, prog: 0}){
     indvTask{
@@ -156,6 +166,7 @@ class CreateIndividualTask {
 }""";
     ApiProvider apiProvider = ApiProvider();
     String response = await apiProvider.interactWithApiQuery(mutationQuery);
+    print(mutationQuery);
     print(response);
     Map<dynamic, dynamic> parsedResponse = json.decode(response);
     if (parsedResponse["data"]["createIndvTask"]["indvTask"]["task"] ==
@@ -167,8 +178,7 @@ class CreateIndividualTask {
   }
 
   Future<List<Task>> taskList(String userId) async {
-    String taskList = """"
-query{
+    String taskList = """query{
   allIndvtasks(user: "$userId")
   {
     edges
@@ -185,14 +195,74 @@ query{
     ApiProvider apiProvider = ApiProvider();
     String taskListResponse = await apiProvider.interactWithApiQuery(taskList);
     Map<dynamic, dynamic> newResponse = json.decode(taskListResponse);
-    print(newResponse.toString());
     List<dynamic> response = newResponse["data"]["allIndvtasks"]["edges"];
-    List<Task> tasks = response
-        .map((e) => Task(
-            title: e["node"]["title"],
-            description: e["node"]["description"],
-            progress: e["node"]["prog"] == 0 ? false : true))
-        .toList();
+    print(response.toString());
+
+    List<Task> tasks = response.map((e) {
+      return Task(
+          title: e["node"]["task"],
+          description: e["node"]["desc"],
+          progress: e["node"]["prog"] == 0 ? false : true);
+    }).toList();
+    print("\n\n\n\length for indvitasklist: ${tasks.length}\n\n\n");
+
     return tasks;
+  }
+
+  Future<List<Task>> teamTaskList(String teamId) async {
+    print(teamId);
+    String taskListQuery = """query{
+  allGrouptasks(team: "$teamId")
+  {
+    edges
+    {
+      node
+      {
+        task
+        description
+        
+      }
+    }
+  }
+}""";
+    ApiProvider apiProvider = ApiProvider();
+    String taskListResponse =
+        await apiProvider.interactWithApiQuery(taskListQuery);
+
+    print(taskListResponse);
+    Map<dynamic, dynamic> newResponse = json.decode(taskListResponse);
+    List<dynamic> responseList = newResponse["data"]["allGrouptasks"]["edges"];
+    print(responseList.toString());
+    List<Task> tasks = responseList.map((e) {
+      // print(e["node"]["task"]);
+      return Task(
+          title: e["node"]["task"],
+          description: e["node"]["description"],
+          progress: false);
+    }).toList();
+    print("\n\n\n\length for teamtasklist: ${tasks.length}\n\n\n");
+    return tasks;
+  }
+
+  Future<List<Task>> createGroupTask(User user, Task task) async {
+    String mutationQuery = """
+    mutation{
+  createGroup(input: {task: "${task.title}", description: "${task.description}", team: ${user.team}}){
+    groupTasks{
+      task 
+    }
+  }
+}""";
+    ApiProvider apiProvider = ApiProvider();
+    String response = await apiProvider.interactWithApiQuery(mutationQuery);
+    print(mutationQuery);
+    print(response);
+    Map<dynamic, dynamic> parsedResponse = json.decode(response);
+    if (parsedResponse["data"]["createGroup"]["groupTasks"]["task"] ==
+        task.title) {
+      List<Task> tasks = await teamTaskList(user.teamCode);
+      return tasks;
+    } else
+      return null;
   }
 }

@@ -9,6 +9,36 @@ class TeamWidget extends StatefulWidget {
 }
 
 class _TeamWidgetState extends State<TeamWidget> {
+  List<Map<dynamic, dynamic>> users = [
+    {
+      "username": "pratt",
+      "completed": 5,
+      "total": 10,
+      "url":
+          "https://icon2.cleanpng.com/20180605/ylu/kisspng-businessperson-clip-art-cartoon-man-5b173e4b598a71.4316264915282499313668.jpg"
+    },
+    {
+      "username": "aditya",
+      "completed": 2,
+      "total": 10,
+      "url":
+          "https://cdn1.vectorstock.com/i/1000x1000/79/30/business-man-cartoon-character-young-handsome-vector-14427930.jpg"
+    },
+    {
+      "username": "bhavika",
+      "completed": 9,
+      "total": 10,
+      "url":
+          "https://img2.pngio.com/animated-faces-my-hero-design-clip-art-woman-singing-angry-woman-female-cartoon-faces-png-820_1059.png"
+    },
+    {
+      "username": "harshad",
+      "completed": 0,
+      "total": 10,
+      "url":
+          "https://i.graphicmama.com/uploads/2017/12/5a2699827c42c-office-work-i-am-the-man.png"
+    },
+  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -20,11 +50,11 @@ class _TeamWidgetState extends State<TeamWidget> {
             child: GridView.builder(
                 shrinkWrap: true,
                 physics: BouncingScrollPhysics(),
-                itemCount: 4,
+                itemCount: users.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: MemberCard(),
+                    child: MemberCard(users[index]),
                   );
                 },
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -41,8 +71,8 @@ class _TeamWidgetState extends State<TeamWidget> {
 }
 
 class MemberCard extends StatelessWidget {
-  final String url =
-      "https://avatars2.githubusercontent.com/u/47568882?s=460&u=bbc6adfd634233f8203ddd66d9007e6f1a2a951f&v=4";
+  var user;
+  MemberCard(this.user);
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -65,11 +95,11 @@ class MemberCard extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: DecorationImage(
-                        image: NetworkImage(url), fit: BoxFit.cover)),
+                        image: NetworkImage(user["url"]), fit: BoxFit.cover)),
               ),
             ),
             SizedBox(height: 5),
-            Text("username",
+            Text(user["username"],
                 style: TextStyle(
                     fontSize: 16.5,
                     color: Colors.black,
@@ -77,12 +107,12 @@ class MemberCard extends StatelessWidget {
             SizedBox(height: 5),
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: progressBar(4, 10),
+              child: progressBar(user["completed"], user["total"]),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("4/10",
+                Text("${user["completed"]}/${user["total"]}",
                     style:
                         TextStyle(fontSize: 15, fontStyle: FontStyle.italic)),
                 SizedBox(width: 3),

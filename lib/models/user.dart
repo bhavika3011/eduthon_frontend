@@ -12,6 +12,7 @@ class User {
   String id; //hashed
   int primaryKey; //1
   List<Task> taskList;
+  List<Task> teamTaskList;
   int team;
   bool isTeamAdmin;
   String teamCode;
@@ -24,6 +25,7 @@ class User {
     this.primaryKey = null;
     this.taskList = null;
     this.team = null;
+    this.teamTaskList = null;
     this.isTeamAdmin = null;
     this.teamCode = null;
     this.username = null;
@@ -35,6 +37,7 @@ class User {
       this.jwt,
       this.password,
       this.primaryKey,
+      this.teamTaskList,
       this.taskList,
       this.team,
       this.isTeamAdmin,

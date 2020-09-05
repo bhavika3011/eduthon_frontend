@@ -334,11 +334,9 @@ class _HomePageState extends State<HomePage>
                   user = await LoginAPI().login(
                       usernameLoginController.value.text,
                       passwordLoginController.value.text);
-                print("here");
                 setState(() {
                   isLoading = false;
                 });
-                print("here again");
                 if (user != null) {
                   Navigator.pushReplacement(
                       context,
