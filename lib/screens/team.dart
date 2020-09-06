@@ -1,9 +1,11 @@
+import 'package:eduthon/models/user.dart';
 import 'package:eduthon/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class TeamWidget extends StatefulWidget {
+  User user;
+  TeamWidget(this.user);
   @override
   _TeamWidgetState createState() => _TeamWidgetState();
 }
@@ -45,6 +47,10 @@ class _TeamWidgetState extends State<TeamWidget> {
         child: SingleChildScrollView(
       child: Column(
         children: [
+          // FutureBuilder(
+          // future: null,
+          // builder: (context, snapshot) {
+          // return
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: GridView.builder(
@@ -63,6 +69,8 @@ class _TeamWidgetState extends State<TeamWidget> {
                   crossAxisSpacing: 8.0,
                   crossAxisCount: 2,
                 )),
+            // );
+            // }
           ),
         ],
       ),

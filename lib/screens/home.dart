@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     widgetList = [
-      TeamWidget(),
+      TeamWidget(widget.user),
       ToDo(widget.user),
       YouTubeVids(),
       ProfileApp(widget.user),

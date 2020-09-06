@@ -226,6 +226,8 @@ class CreateIndividualTask {
   }
 }""";
     ApiProvider apiProvider = ApiProvider();
+    print(taskListQuery);
+
     String taskListResponse =
         await apiProvider.interactWithApiQuery(taskListQuery);
 
@@ -264,5 +266,24 @@ class CreateIndividualTask {
       return tasks;
     } else
       return null;
+  }
+}
+
+class Misc {
+  Future<List<dynamic>> allUsersFromTeam(String teamCode) async {
+    String query = """query{
+      allUsers(team: $teamCode)
+      {
+        edges{
+          node{
+            username
+          }
+        }
+      }
+    }""";
+    ApiProvider apiProvider = ApiProvider();
+    String response = await apiProvider.interactWithApiQuery(query);
+    Map<dynamic, dynamic> parsedResponse = json.decode(response);
+    List<dynamic> allUserNames = parsedResponse["data"]["allUsers"]["edges"];
   }
 }

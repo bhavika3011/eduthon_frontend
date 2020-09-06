@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:eduthon/backend/api_provider.dart';
 import 'package:eduthon/models/task.dart';
 import 'package:eduthon/models/user.dart';
@@ -91,9 +90,6 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
   }
 
   Widget personalTodo() {
-    StreamController<List<Task>> personalController =
-        StreamController<List<Task>>();
-    personalController.add(user.taskList);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -106,7 +102,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                   topRight: Radius.circular(40), topLeft: Radius.circular(40)),
             ),
             child: StreamBuilder<List<Task>>(
-                initialData: individual,
+                // initialData: individual,
                 stream: _personalTask,
                 builder: (context, snapshot) {
                   print(snapshot.data);
@@ -156,7 +152,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                 }),
           ),
           Positioned(
-            child: addPersonalTask(personalController),
+            child: addPersonalTask(),
             bottom: 30,
             right: 20,
           )
@@ -165,7 +161,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget addGroupTask(StreamController<List<Task>> groupController) {
+  Widget addGroupTask() {
     return InkWell(
       onTap: () {
         showDialog(
@@ -190,10 +186,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                         description: groupDescController.value.text);
                     user.taskList = await CreateIndividualTask()
                         .createGroupTask(user, task);
-                    setState(() {
-                      group.add(task);
-                    });
-                    groupController.add(user.teamTaskList);
+
                     _groupTask.add(user.teamTaskList);
                     Navigator.pop(context);
                   },
@@ -298,7 +291,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget addPersonalTask(StreamController<List<Task>> personalController) {
+  Widget addPersonalTask() {
     return InkWell(
       onTap: () {
         showDialog(
@@ -323,11 +316,8 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                         description: descController.value.text);
                     user.taskList =
                         await CreateIndividualTask().createTask(user, task);
-                    personalController.add(user.taskList);
                     _personalTask.add(user.taskList);
-                    setState(() {
-                      individual.add(task);
-                    });
+
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -432,10 +422,6 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
   }
 
   Widget groupTodo() {
-    StreamController<List<Task>> groupController =
-        StreamController<List<Task>>();
-
-    groupController.add(user.teamTaskList);
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(
@@ -450,7 +436,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
               ),
               child: StreamBuilder<List<Task>>(
                   stream: _groupTask,
-                  initialData: group,
+                  // initialData: group,
                   builder: (context, snapshot) {
                     print(snapshot.data);
                     if (snapshot.hasData)
@@ -501,9 +487,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                   }),
             ),
             Positioned(
-              child: user.isTeamAdmin
-                  ? addGroupTask(groupController)
-                  : Container(),
+              child: user.isTeamAdmin ? addGroupTask() : Container(),
               bottom: 30,
               right: 20,
             )
