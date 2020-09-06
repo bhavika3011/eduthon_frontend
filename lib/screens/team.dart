@@ -76,12 +76,7 @@ class MemberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TeamMate(), fullscreenDialog: true));
-      },
+      onTap: () {},
       child: Card(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

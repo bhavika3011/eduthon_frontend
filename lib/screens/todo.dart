@@ -110,12 +110,17 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                               title: Text(
                                 snapshot.data[index].title,
                                 style: TextStyle(
-                                    color: mainColor,
-                                    fontWeight: FontWeight.bold),
+                                  color: mainColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               subtitle: Text(
                                 snapshot.data[index].description ?? "",
-                                style: TextStyle(color: Colors.grey[700]),
+                                style: TextStyle(
+                                    color: Colors.grey[700],
+                                    decoration: snapshot.data[index].progress
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none),
                               ),
                               leading: Checkbox(
                                   value: snapshot.data[index].progress,
@@ -447,11 +452,18 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                                   snapshot.data[index].title,
                                   style: TextStyle(
                                       color: mainColor,
-                                      fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      decoration: snapshot.data[index].progress
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none),
                                 ),
                                 subtitle: Text(
                                   snapshot.data[index].description ?? "",
-                                  style: TextStyle(color: Colors.grey[700]),
+                                  style: TextStyle(
+                                      color: Colors.grey[700],
+                                      decoration: snapshot.data[index].progress
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none),
                                 ),
                                 leading: Checkbox(
                                     value: snapshot.data[index].progress,
