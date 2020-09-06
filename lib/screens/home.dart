@@ -1,5 +1,4 @@
 import 'package:eduthon/models/user.dart';
-import 'package:eduthon/screens/chat.dart';
 import 'package:eduthon/screens/team.dart';
 import 'package:eduthon/shared/app_bar.dart';
 import 'package:eduthon/screens/todo.dart';
@@ -31,14 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     widgetList = [
       TeamWidget(),
-      Container(),
       ToDo(widget.user),
       YouTubeVids(),
       ProfileApp(widget.user),
     ];
   }
 
-  List<String> titleList = ['Team', 'Chat', 'Tasks', 'Watch', 'Profile'];
+  List<String> titleList = ['Team', 'Tasks', 'Watch', 'Profile'];
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
             items: [
               BottomNavigationBarItem(
                   icon: Icon(FontAwesomeIcons.users), title: Text("Team")),
-              BottomNavigationBarItem(
-                  icon: Icon(FontAwesomeIcons.comments), title: Text("Chat")),
               BottomNavigationBarItem(
                   icon: Icon(FontAwesomeIcons.tasks), title: Text("Tasks")),
               BottomNavigationBarItem(

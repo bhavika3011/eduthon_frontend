@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:rxdart/rxdart.dart';
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:eduthon/backend/api_provider.dart';
 import 'package:eduthon/models/task.dart';
@@ -20,6 +20,13 @@ class ToDo extends StatefulWidget {
 class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
   TabController tabController;
   var tabHeaderStyle = TextStyle(fontSize: 15, color: mainColor);
+  Stream<List<Task>> get personalTasks => _personalTask.stream;
+
+  final _personalTask = BehaviorSubject<List<Task>>();
+
+  Stream<List<Task>> get groupTasks => _groupTask.stream;
+
+  final _groupTask = BehaviorSubject<List<Task>>();
 
   TextEditingController titleController,
       descController,
@@ -37,6 +44,8 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
     descController = TextEditingController();
     groupDescController = TextEditingController();
     groupTitleController = TextEditingController();
+    _personalTask.add(user.taskList);
+    _groupTask.add(user.taskList);
     individual = user.taskList;
     group = user.teamTaskList;
   }
@@ -98,7 +107,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
             ),
             child: StreamBuilder<List<Task>>(
                 initialData: individual,
-                stream: personalController.stream.asBroadcastStream(),
+                stream: _personalTask,
                 builder: (context, snapshot) {
                   print(snapshot.data);
                   if (snapshot.hasData)
@@ -185,6 +194,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                       group.add(task);
                     });
                     groupController.add(user.teamTaskList);
+                    _groupTask.add(user.teamTaskList);
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -314,6 +324,7 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                     user.taskList =
                         await CreateIndividualTask().createTask(user, task);
                     personalController.add(user.taskList);
+                    _personalTask.add(user.taskList);
                     setState(() {
                       individual.add(task);
                     });
@@ -438,8 +449,8 @@ class _ToDoState extends State<ToDo> with SingleTickerProviderStateMixin {
                     topLeft: Radius.circular(40)),
               ),
               child: StreamBuilder<List<Task>>(
-                  stream: groupController.stream.asBroadcastStream(),
-                  initialData: individual,
+                  stream: _groupTask,
+                  initialData: group,
                   builder: (context, snapshot) {
                     print(snapshot.data);
                     if (snapshot.hasData)
